@@ -1,19 +1,28 @@
-1. Investigate Epigenetic Modifications
+## Project Objectives
 
-This objective focuses on identifying and analyzing changes in the epigenome, such as DNA methylation and histone modification patterns that are unique to colorectal cancer. Epigenetic modifications can alter gene expression without changing the DNA sequence, often contributing to cancer development and progression. By mapping these changes, the study aims to reveal new regulatory mechanisms and potential targets for intervention.
+The objectives of this project are designed to align with the implemented whole-exome sequencing (WES) pipeline and the broader goal of colorectal cancer biomarker discovery. The specific objectives are to:
 
-2. Identify and Characterize Genes Involved
+- Perform **quality control and preprocessing** of raw paired-end sequencing data using standard NGS quality assessment and trimming tools.
+- Align high-quality reads to the **human reference genome (hg38)** and generate analysis-ready alignment files following **GATK best practices**.
+- Apply **post-alignment processing**, including duplicate marking and **base quality score recalibration (BQSR)**, to improve variant-calling accuracy.
+- Conduct **chromosome-specific variant discovery (chromosome 12)** using **GATK HaplotypeCaller**, with a targeted focus on the **KRAS gene**, a key biomarker in colorectal cancer.
+- Identify and filter **high-confidence single nucleotide variants (SNVs) and small insertions/deletions (INDELs)** relevant to colorectal cancer.
+- Prepare variant datasets for **functional annotation and downstream biological interpretation**.
+- Establish a **reproducible and scalable bioinformatics workflow** that can be extended to additional cancer-associated genes or integrated with epigenomic and transcriptomic data in future studies.
 
-The goal here is to detect genes whose expression or regulation is significantly altered in colorectal cancer due to epigenetic modifications. This involves integrating genomic data (like mutations or copy number variation) with transcriptomic profiles (mRNA expression levels), ultimately helping to pinpoint genes that drive cancer or may serve as biomarkers for the disease.
+---
 
-3. Map and Analyze Biological Pathways
+## Methodological Approach
 
-This step involves linking the identified genes and epigenetic changes to known biological pathways, such as cell cycle regulation, apoptosis, and DNA repair. Pathway analysis enables researchers to understand the broader impact of altered genes and how these disruptions contribute to cancer phenotypes. Discovering affected pathways can also guide the development of targeted therapies.
+This project primarily implements a **DNA-based whole-exome sequencing (WES) analysis pipeline** following **GATK best practices** to identify high-confidence genetic variants associated with colorectal cancer. The pipeline focuses on chromosome 12 to investigate clinically relevant mutations in the **KRAS gene**.
 
-4. Develop and Validate Biomarkers
+In addition to genomic variant discovery, the project is framed within a broader **epigenomic and transcriptomic context**. RNA-based high-throughput technologies, such as RNA sequencing (RNA-seq), are discussed as complementary approaches for understanding gene expression changes and epigenetic regulation in colorectal cancer.
 
-Here, the project aims to discover specific RNA molecules or gene signatures that can reliably indicate the presence or progression of colorectal cancer. This involves statistical validation, comparing gene expression in cancerous versus normal tissues, and assessing the predictive power of identified biomarkers. Clinically validated biomarkers could improve early detection and patient stratification.
+By integrating variant-level genomic insights with known epigenetic and transcriptomic mechanisms reported in the literature, this project establishes a foundation for future multi-omics analyses.
 
-5.  Provide a Reproducible Methodology
+This integrative framework supports:
 
-The final objective is to document and share a step-by-step methodological workflow—especially for RNA expression analysis—enabling other researchers to reproduce the analysis or apply it to other datasets. This includes detailing data preprocessing, normalization, statistical analysis, and relevant bioinformatics tools or pipelines used, fostering transparency and reproducibility in cancer research.
+- Early cancer detection
+- Risk stratification
+- Identification of therapeutic targets
+- Development of personalized treatment strategies
