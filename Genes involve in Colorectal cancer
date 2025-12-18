@@ -1,0 +1,138 @@
+## Key Genes Involved in Colorectal Cancer
+
+Colorectal cancer (CRC) development is driven by the accumulation of genetic and epigenetic alterations affecting multiple oncogenes and tumor suppressor genes. The following genes are among the most frequently altered and play critical roles in CRC initiation, progression, and malignancy.
+
+### Tumor Suppressor Genes
+
+- **APC**  
+  One of the earliest and most frequently mutated genes in CRC. APC mutations disrupt the **Wnt signaling pathway**, leading to uncontrolled cell proliferation and adenoma formation.
+
+- **TP53**  
+  Inactivation typically occurs during the transition from adenoma to carcinoma. Loss of TP53 impairs **DNA damage response, cell cycle control, and apoptosis**.
+
+- **SMAD4**  
+  Altered in later stages of tumor progression; disrupts **TGF-β signaling**, contributing to increased invasiveness and metastasis.
+
+- **SMAD2**  
+  Mediates TGF-β signaling involved in **cell differentiation and growth inhibition**.
+
+- **DCC (Deleted in Colorectal Carcinoma)**  
+  Functions as a tumor suppressor involved in **cell adhesion and apoptosis**; frequently lost in advanced CRC.
+
+- **FBXW7**  
+  Regulates cell cycle progression by ubiquitinating key oncogenic proteins; mutations lead to **genomic instability**.
+
+---
+
+### Oncogenes
+
+- **KRAS**  
+  Activating mutations promote the **adenoma-to-carcinoma transition** by constitutive activation of the **RAS/MAPK pathway**. KRAS mutations are clinically significant predictors of therapy response.
+
+- **BRAF**  
+  Frequently mutated in microsatellite instability (MSI)-high tumors; activates the **MAPK signaling pathway**.
+
+- **PIK3CA**  
+  Often mutated in advanced CRC, leading to activation of the **PI3K/AKT pathway**, promoting cell survival and growth.
+
+- **NRAS**  
+  Contributes to aberrant signaling through the **RAS/MAPK pathway**, though less frequently mutated than KRAS.
+
+---
+
+### DNA Mismatch Repair (MMR) Genes
+
+Defects in DNA mismatch repair result in **microsatellite instability (MSI)**, a hallmark of a subset of colorectal cancers.
+
+- **MLH1**
+- **MSH2**
+- **MSH6**
+- **PMS2**
+- **EPCAM**
+
+Alterations in these genes—through mutations or epigenetic silencing—lead to impaired DNA repair and increased mutation rates, contributing to tumorigenesis.
+
+---
+
+## Genetic Progression of Colorectal Cancer
+
+Colorectal cancer follows a stepwise progression model, commonly referred to as the **Vogelstein model**, in which multiple genetic alterations accumulate over time:
+
+1. **Initiation**  
+   - Early **APC mutations** lead to abnormal Wnt signaling and adenoma formation.
+
+2. **Progression**  
+   - **KRAS mutations** drive the transition from early adenomas to intermediate and advanced precancerous lesions.  
+   - Additional mutations in **BRAF** and **PIK3CA** may occur.
+
+3. **Malignant Transformation**  
+   - Late-stage inactivation of **TP53** and **SMAD4** supports carcinoma development, invasiveness, and metastasis.
+
+---
+
+## Rationale for Choosing the KRAS Gene
+
+The **KRAS gene** was selected as the primary focus of this project due to its **central role in colorectal cancer (CRC) pathogenesis**, strong **clinical relevance**, and suitability for targeted genomic analysis.
+
+### Biological Significance
+
+KRAS is a well-established **oncogene** that encodes a small GTPase involved in critical cellular signaling pathways, most notably the **RAS–RAF–MEK–ERK (MAPK) pathway**. This pathway regulates:
+
+- Cell proliferation
+- Differentiation
+- Survival
+- Apoptosis
+
+Activating mutations in KRAS lead to **constitutive signaling**, resulting in uncontrolled cell growth and tumor progression. In CRC, KRAS mutations typically occur **early to intermediate stages**, driving the transition from adenoma to carcinoma.
+
+---
+
+### Clinical Relevance
+
+KRAS mutations are among the **most frequent driver mutations in colorectal cancer**, occurring in approximately **30–40% of CRC cases**. Their clinical importance includes:
+
+- **Predictive biomarker:** KRAS mutation status determines resistance to **anti-EGFR therapies** such as cetuximab and panitumumab.
+- **Prognostic value:** Certain KRAS mutations are associated with aggressive tumor behavior and poor clinical outcomes.
+- **Therapeutic decision-making:** Routine KRAS testing is standard practice in CRC clinical management.
+
+---
+
+### Genomic and Technical Justification
+
+- **Chromosomal location:** KRAS is located on **chromosome 12 (12p12.1)**, enabling a focused, chromosome-specific analysis.
+- **Hotspot mutations:** Most clinically relevant mutations occur at **codons 12, 13, and 61**, making KRAS ideal for variant detection using WES data.
+- **Pipeline efficiency:** Restricting analysis to chromosome 12 significantly reduces computational complexity while maintaining high biological relevance.
+- **Demonstration of best practices:** KRAS serves as an excellent model gene for demonstrating a **GATK best-practices variant discovery pipeline**.
+
+---
+
+### Relevance to Biomarker Discovery
+
+Because KRAS mutations are:
+- Frequent
+- Clinically actionable
+- Biologically well-characterized
+
+they represent **robust biomarkers** for colorectal cancer. Identifying high-confidence KRAS variants supports:
+
+- Precision oncology approaches
+- Patient stratification
+- Integration with epigenomic and transcriptomic data for multi-layered biomarker discovery
+
+---
+
+### Alignment with Project Objectives
+
+Focusing on KRAS allows this project to:
+
+- Validate the effectiveness of a **chromosome-focused NGS analysis pipeline**
+- Generate **analysis-ready variants** with direct clinical relevance
+- Establish a scalable framework that can be extended to additional CRC-associated genes or integrated epigenomic analyses
+
+Overall, the selection of KRAS strengthens the biological, clinical, and methodological foundation of this colorectal cancer biomarker discovery project.
+
+---
+
+## Relevance to This Project
+
+These driver genes represent critical molecular targets for **variant discovery and biomarker identification** in colorectal cancer. The analysis pipeline implemented in this project enables the detection of clinically relevant variants—particularly within **KRAS and other cancer-associated genes**—providing a genomic foundation for future integration with epigenomic and transcriptomic data.

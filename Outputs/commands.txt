@@ -1,0 +1,145 @@
+    1  docker --version
+    2  sudo apt update
+    3  sudo apt upgrade -y
+    4  sudo apt install -y fastqc bwa samtools bcftools vcftools
+    5  conda install -c bioconda seqtk -y
+    6  sudo docker pull broadinstitute/gatk:latest
+    7  mkdir -p Raw_Data Outputs
+    8  cd Raw_Data
+    9  wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR355/082/SRR35521082/SRR35521082_1.fastq.gz
+   10  wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR355/082/SRR35521082/SRR35521082_2.fastq.gz
+   11  seqtk sample -s123 SRR35521082_1.fastq.gz 300000 > SRR35521082_1_300k.fastq.gz
+   12  seqtk sample -s123 SRR35521082_2.fastq.gz 300000 > SRR35521082_2_300k.fastq.gz
+   13  rm SRR35521082_1.fastq.gz SRR35521082_2.fastq.gz
+   14  cd ..
+   15  wget -nc https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_assembly_structure/Primary_Assembly/assembled_chromosomes/FASTA/chr12.fna.gz
+   16  gunzip chr12.fna.gz
+   17  mv chr12.fna Outputs/chr12.fa
+   18  fastqc -o Outputs Raw_Data/SRR35521082_1_300k.fastq.gz Raw_Data/SRR35521082_2_300k.fastq.gz
+   19  gunzip SRR35521082_1_300k.fastq.gz
+   20  mv Raw_Data/SRR35521082_1_300k.fastq.gz Raw_Data/SRR35521082_1_300k.fastq
+   21  mv Raw_Data/SRR35521082_2_300k.fastq.gz Raw_Data/SRR35521082_2_300k.fastq
+   22  fastqc -o Outputs Raw_Data/SRR35521082_1_300k.fastq Raw_Data/SRR35521082_2_300k.fastq
+   23  fastqc -o Outputs Raw_Data/SRR35521082_1_300k.fastq.gz Raw_Data/SRR35521082_2_300k.fastq.gz
+   24  fastqc -o Outputs Raw_Data/SRR35521082_1_300k.fastq Raw_Data/SRR35521082_2_300k.fastq
+   25  cd Outputs
+   26  bwa index chr12.fa
+   27  samtools faidx chr12.fa
+   28  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk CreateSequenceDictionary -R /data/chr12.fa -O /data/chr12.dict
+   29  bwa mem -t 4 -R "@RG\tID:SRR35521082\tPL:ILLUMINA\tSM:SRR35521082" chr12.fa ../Raw_Data/SRR35521082_1_300k.fastq.gz ../Raw_Data/SRR35521082_2_300k.fastq.gz > SRR35521082.sam
+   30  bwa mem -t 4 -R "@RG\tID:SRR35521082\tPL:ILLUMINA\tSM:SRR35521082" chr12.fa ../Raw_Data/SRR35521082_1_300k.fastq ../Raw_Data/SRR35521082_2_300k.fastq > SRR35521082.sam
+   31  samtools sort -o SRR35521082.sorted.bam SRR35521082.sam
+   32  samtools index SRR35521082.sorted.bam
+   33  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk MarkDuplicatesSpark -I /data/SRR35521082.sorted.bam -O /data/SRR35521082.sorted.dedup.bam
+   34  samtools index SRR35521082.sorted.dedup.bam
+   35  rm SRR35521082.sam
+   36  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk MarkDuplicatesSpark -I /data/SRR35521082.sorted.bam -O /data/SRR35521082.sorted.dedup.bam -M /data/SRR35521082.metrics.txt
+   37  samtools index SRR35521082.sorted.dedup.bam
+   38  ls -lh SRR35521082.sorted.dedup.bam*
+   39  rm SRR35521082.sorted.dedup.bam.bai
+   40  rm SRR35521082.sorted.dedup.bam.sbi
+   41  samtools index SRR35521082.sorted.dedup.bam
+   42  ls -lh SRR35521082.sorted.dedup.bam*
+   43  wget -nc https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+   44  bcftools index Homo_sapiens_assembly38.dbsnp138.vcf.gz
+   45  bcftools view -r chr12 Homo_sapiens_assembly38.dbsnp138.vcf.gz -Oz -o known_sites_chr12.vcf.gz
+   46  bcftools index known_sites_chr12.vcf.gz
+   47  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk BaseRecalibrator -I /data/SRR35521082.sorted.dedup.bam -R /data/chr12.fa --known-sites /data/known_sites_chr12.vcf.gz -O /data/SRR35521082_recal_data.table
+   48  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk IndexFeatureFile -I /data/known_sites_chr12.vcf.gz
+   49  ls known_sites_chr12.vcf.gz*
+   50  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk BaseRecalibrator -R /data/chr12.fa -I /data/SRR35521082.sorted.dedup.bam --known-sites /data/known_sites_chr12.vcf.gz -O /data/SRR35521082.recal_data.table
+   51  grep "^>" chr12.fa
+   52  sed 's/>NC_000012.12/>chr12/' chr12.fa > chr12_chr.fa
+   53  mv chr12_chr.fa chr12.fa
+   54  rm chr12.fa.*
+   55  rm chr12.dict
+   56  bwa index chr12.fa
+   57  samtools faidx chr12.fa
+   58  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk CreateSequenceDictionary -R /data/chr12.fa -O /data/chr12.dict
+   59  grep "^>" chr12.fa
+   60  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk BaseRecalibrator -R /data/chr12.fa -I /data/SRR35521082.sorted.dedup.bam --known-sites /data/known_sites_chr12.vcf.gz -O /data/SRR35521082.recal_data.table
+   61  mkdir -p old_bam
+   62  mv SRR35521082.sorted*.bam* old_bam/
+   63  bwa mem -t 8 chr12.fa SRR35521082_1.fastq.gz SRR35521082_2.fastq.gz > SRR35521082.sam
+   64  bwa mem -t 8 chr12.fa ../Raw_Data/SRR35521082_1_300k.fastq ../Raw_Data/SRR35521082_2_300k.fastq > SRR35521082.sam
+   65  samtools view -Sb SRR35521082.sam | samtools sort -o SRR35521082.sorted.bam
+   66  samtools index SRR35521082.sorted.bam
+   67  sudo docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk MarkDuplicates -I /data/SRR35521082.sorted.bam -O /data/SRR35521082.sorted.dedup.bam -M /data/SRR35521082.metrics.txt
+   68  samtools index SRR35521082.sorted.dedup.bam
+   69  [200~ls -lh *.bam
+   70  ~
+   71  ls -lh *.bam
+   72  samtools index SRR35521082.sorted.bam
+   73  ls -lh SRR35521082.sorted.bam*
+   74  sudo docker run --rm   -v "$PWD":/data   broadinstitute/gatk:latest   gatk MarkDuplicates   -I /data/SRR35521082.sorted.bam   -O /data/SRR35521082.sorted.dedup.bam   -M /data/SRR35521082.metrics.txt   --CREATE_INDEX true
+   75  ls -lh SRR35521082.sorted.dedup.bam*
+   76  bwa mem -t 8 -R "@RG\tID:SRR35521082\tPL:ILLUMINA\tSM:SRR35521082" chr12.fa ../Raw_Data/SRR35521082_1_300k.fastq.gz ../Raw_Data/SRR35521082_2_300k.fastq.gz > SRR35521082.sam
+   77  bwa mem -t 8 -R "@RG\tID:SRR35521082\tPL:ILLUMINA\tSM:SRR35521082" Outputs/chr12.fa Raw_Data/SRR35521082_1_300k.fastq Raw_Data/SRR35521082_2_300k.fastq > Outputs/SRR35521082.sam
+   78  samtools sort -o Outputs/SRR35521082.sorted.bam Outputs/SRR35521082.sam
+   79  samtools index Outputs/SRR35521082.sorted.bam
+   80  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk MarkDuplicates -I /data/Outputs/SRR35521082.sorted.bam -O /data/Outputs/SRR35521082.sorted.dedup.bam -M /data/Outputs/SRR35521082.metrics.txt
+   81  samtools index Outputs/SRR35521082.sorted.dedup.bam
+   82  samtools view -H Outputs/SRR35521082.sorted.dedup.bam
+   83  sed 's/^>chr12/>NC_000012.12/' Outputs/chr12.fa > Outputs/chr12.NC.fa
+   84  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk CreateSequenceDictionary -R /data/Outputs/chr12.NC.fa -O /data/Outputs/chr12.NC.dict
+   85  cat > Outputs/contig_rename.txt <<EOF
+   86  chr12 NC_000012.12
+   87  EOF
+   88  bcftools annotate --rename-chrs Outputs/contig_rename.txt -Oz -o Outputs/known_sites_chr12.NC.vcf.gz Outputs/known_sites_chr12.vcf.gz
+   89  mkdir -p Raw_Data Outputs
+   90  wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR355/082/SRR35521082/SRR35521082_1.fastq.gz -P Raw_Data
+   91  sudo apt update
+   92  sudo apt upgrade -y
+   93  sudo apt install -y fastqc bwa samtools bcftools vcftools docker.io
+   94  conda install -c bioconda seqtk
+   95  sudo docker pull broadinstitute/gatk:latest
+   96  sudo apt update
+   97  sudo apt upgrade -y
+   98  sudo apt install -y fastqc bwa samtools bcftools vcftools
+   99  conda install -c bioconda seqtk
+  100  sudo docker pull broadinstitute/gatk:latest
+  101  mkdir -p Raw_Data Outputs
+  102  wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR355/082/SRR35521082/SRR35521082_1.fastq.gz -P Raw_Data
+  103  wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR355/082/SRR35521082/SRR35521082_2.fastq.gz -P Raw_Data
+  104  seqtk sample -s123 Raw_Data/SRR35521082_1.fastq.gz 300000 > Raw_Data/SRR35521082_1_300k.fastq
+  105  seqtk sample -s123 Raw_Data/SRR35521082_2.fastq.gz 300000 > Raw_Data/SRR35521082_2_300k.fastq
+  106  fastqc -o Outputs Raw_Data/SRR35521082_1_300k.fastq Raw_Data/SRR35521082_2_300k.fastq
+  107  wget -nc https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_assembly_structure/Primary_Assembly/assembled_chromosomes/FASTA/chr12.fna.gz
+  108  gunzip chr12.fna.gz
+  109  mv chr12.fna Outputs/chr12.fa
+  110  cd Outputs
+  111  rm ./SRR35521082_1.fastq.gz
+  112  bwa index chr12.fa
+  113  samtools faidx chr12.fa
+  114  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk CreateSequenceDictionary -R /data/chr12.fa -O /data/chr12.dict
+  115  bwa mem -t 4 -R "@RG\tID:SRR35521082\tPL:ILLUMINA\tSM:SRR35521082" chr12.fa ../Raw_Data/SRR35521082_1_300k.fastq ../Raw_Data/SRR35521082_2_300k.fastq | samtools sort -o SRR35521082.sorted.bam
+  116  samtools index SRR35521082.sorted.bam
+  117  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk MarkDuplicates -I /data/SRR35521082.sorted.bam -O /data/SRR35521082.sorted.dedup.bam -M /data/SRR35521082.metrics.txt
+  118  samtools index SRR35521082.sorted.dedup.bam
+  119  wget -nc https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+  120  bcftools index Homo_sapiens_assembly38.dbsnp138.vcf.gz
+  121  bcftools view -r chr12 Homo_sapiens_assembly38.dbsnp138.vcf.gz -Oz -o known_sites_chr12.vcf.gz
+  122  bcftools index known_sites_chr12.vcf.gz
+  123  cat > contig_rename.txt <<EOF
+chr12 NC_000012.12
+EOF
+
+  124  bcftools annotate --rename-chrs contig_rename.txt -Oz -o known_sites_chr12_NC.vcf.gz known_sites_chr12.vcf.gz
+  125  tabix -p vcf known_sites_chr12_NC.vcf.gz
+  126  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk BaseRecalibrator -I /data/SRR35521082.sorted.dedup.bam -R /data/chr12.fa --known-sites /data/known_sites_chr12_NC.vcf.gz -O /data/SRR35521082.recal_data.table
+  127  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk ApplyBQSR -I /data/SRR35521082.sorted.dedup.bam -R /data/chr12.fa --bqsr-recal-file /data/SRR35521082.recal_data.table -O /data/SRR35521082.sorted.dedup.BQSR.bam
+  128  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk HaplotypeCaller -R /data/chr12.fa -I /data/SRR35521082.sorted.dedup.BQSR.bam -O /data/SRR35521082.raw.vcf
+  129  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk SelectVariants -R /data/chr12.fa -V /data/SRR35521082.raw.vcf --select-type SNP -O /data/SRR35521082.raw_snps.vcf
+  130  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk SelectVariants -R /data/chr12.fa -V /data/SRR35521082.raw.vcf --select-type INDEL -O /data/SRR35521082.raw_indels.vcf
+  131  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk VariantFiltration -R /data/chr12.fa -V /data/SRR35521082.raw_snps.vcf -O /data/SRR35521082.filtered_snps.vcf -filter-name "QD_filter" -filter "QD < 2.0" -filter-name "FS_filter" -filter "FS > 60.0" -filter-name "MQ_filter" -filter "MQ < 40.0" -filter-name "SOR_filter" -filter "SOR > 4.0" -filter-name "MQRankSum_filter" -filter "MQRankSum < -12.5" -filter-name "ReadPosRankSum_filter" -filter "ReadPosRankSum < -8.0"
+  132  docker run --rm -v "$PWD":/data broadinstitute/gatk:latest gatk SelectVariants --exclude-filtered -V /data/SRR35521082.filtered_snps.vcf -O /data/SRR35521082.analysis_ready_snps.vcf
+  133  docker run -it --rm -v "$PWD":/data bioinfochrustrasbourg/annovar:latest perl ./convert2annovar.pl -format vcf4 /data/SRR35521082.analysis_ready_snps.vcf -outfile /data/SRR35521082.analysis_ready_snps.avinput
+  134  mkdir -p humandb
+  135  cd humandb
+  136  wget http://www.openbioinformatics.org/annovar/download/hg38_refGene.txt.gz
+  137  wget http://www.openbioinformatics.org/annovar/download/hg38_refGeneMrna.fa.gz
+  138  wget http://www.openbioinformatics.org/annovar/download/hg38_refGeneVersion.txt.gz
+  139  ls -lh
+  140  cd ..
+  141  ls -lh
+  142  history > commands.txt

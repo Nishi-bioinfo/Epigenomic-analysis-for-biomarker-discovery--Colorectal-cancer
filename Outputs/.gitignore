@@ -1,0 +1,20 @@
+# Raw sequencing data
+Raw_Data/
+*.fastq
+*.fastq.gz
+
+# Output files
+Outputs/
+*.bam
+*.bai
+*.vcf
+*.vcf.gz
+*.vcf.gz.tbi
+*.fa
+*.fai
+*.sa
+*.csi
+
+# Logs and temp files
+*.log
+*.tmp
