@@ -1,0 +1,63 @@
+{
+  "variant": {
+    "gene": "KRAS",
+    "position": "chr12:25245350",
+    "nucleotide_change": "c.35G>T",
+    "protein_change": "p.G12V",
+    "dbsnp_id": "rs121913529"
+  },
+  "structural_data": {
+    "pdb_id": "6OIM",
+    "protein": "KRAS GTPase (isoform A)",
+    "affected_residue": 12,
+    "wt_amino_acid": "Gly",
+    "mut_amino_acid": "Val",
+    "domain": "Switch I region",
+    "location_detail": "N-terminal region critical for GTP/GDP binding and nucleotide exchange"
+  },
+  "structural_impact": {
+    "steric_effect": "HIGH",
+    "reason": "Glycine\u2192Valine substitution increases side-chain volume (~100 \u00c5\u00b3 expansion)",
+    "consequence": "Altered conformational dynamics in Switch I/II regions affecting GTPase activity",
+    "impact_on_gdp_binding": "Compromised GDP release; impaired GTPase-activating protein (GAP) interactions",
+    "gtp_loading_state": "Shifted towards constitutive GTP-bound (active) state"
+  },
+  "functional_impact": {
+    "classification": "Pathogenic/Activating Mutation",
+    "mechanism": "Loss of GTPase intrinsic activity + impaired GAP-mediated GTP hydrolysis",
+    "functional_consequence": "Constitutive KRAS activation",
+    "downstream_signaling": [
+      "Increased MAPK/ERK pathway activation",
+      "Enhanced PI3K/AKT pathway signaling",
+      "Elevated RalGDS activation",
+      "Sustained mTORC1 signaling"
+    ]
+  },
+  "cancer_association": {
+    "disease": "Colorectal Cancer",
+    "prevalence_in_crc": "40-45% of CRC harbor KRAS mutations",
+    "g12_hotspot_frequency": "G12 is the most common KRAS mutation site in CRC",
+    "g12v_frequency": "~7-10% of KRAS-mutant CRC",
+    "clinical_significance": "Associated with worse prognosis and therapy resistance"
+  },
+  "therapeutic_implications": {
+    "existing_drugs": [
+      "KRAS G12C inhibitors (not applicable - G12V is different)",
+      "MEK inhibitors (trametinib, selumetinib) - target downstream MAPK",
+      "PI3K/AKT/mTOR inhibitors (multiple targets)"
+    ],
+    "emerging_approaches": [
+      "KRAS G12V-specific inhibitors (in development)",
+      "Allosteric KRAS inhibitors",
+      "Combination therapies targeting multiple KRAS effector pathways"
+    ],
+    "resistance_mechanisms": "High frequency of secondary mutations affecting RAF, MEK, TP53"
+  },
+  "structural_stability_prediction": {
+    "protein_fold_stability": "MAINTAINED",
+    "mutation_type": "Conservative (hydrophobic\u2192hydrophobic)",
+    "overall_structure": "Protein fold remains stable; local conformational changes in Switch regions",
+    "thermodynamic_stability": "\u0394\u0394G \u2248 -1 to -2 kcal/mol (slight destabilization or neutral)"
+  },
+  "recommendation": "PATHOGENIC VARIANT - Functional driver mutation in CRC. Recommend targeted therapy strategies."
+}

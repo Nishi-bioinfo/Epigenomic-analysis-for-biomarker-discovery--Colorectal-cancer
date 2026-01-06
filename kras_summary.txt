@@ -1,0 +1,1 @@
+chr12 25245350 KRAS c.35G>T p.G12V rs121913529 Pathogenic
