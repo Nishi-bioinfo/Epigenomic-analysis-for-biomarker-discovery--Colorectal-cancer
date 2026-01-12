@@ -119,12 +119,12 @@ VCFannotation.txt reproducible pipeline
 Key Scientific Finding
 KRAS chr12:25245350 G>T (p.G12V):
 
-✅ Heterozygous somatic mutation (AD=15,14 balanced support)
+ Heterozygous somatic mutation (AD=15,14 balanced support)
 
-✅ GQ=90 (>99% confidence)
+GQ=90 (>99% confidence)
 
-✅ dbSNP validated (rs121913529)
+ dbSNP validated (rs121913529)
 
-✅ Structural modeling ready (6OIM.pdb + PyMOL)
+ Structural modeling ready (6OIM.pdb + PyMOL)
 
-✅ 40% CRC prevalence driver mutation
+ 40% CRC prevalence driver mutation
