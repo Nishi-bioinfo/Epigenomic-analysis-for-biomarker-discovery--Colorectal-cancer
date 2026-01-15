@@ -8,16 +8,16 @@ set -euo pipefail
 
 # -------- CONFIGURATION --------
 THREADS=8
-REF="chr12.fa"
-R1="sample_R1.fastq.gz"
-R2="sample_R2.fastq.gz"
+REF="$PWD/Outputs/chr12.fa"
+R1="$PWD/Raw_Data/SRR35521082_1_300k.fastq"
+R2="$PWD/Raw_Data/SRR35521082_2_300k.fastq"
 
 WORKDIR="$PWD"
-OUTDIR="$WORKDIR/output"
+OUTDIR="$PWD/Outputs"
 GATK_IMAGE="broadinstitute/gatk:latest"
 
-POSITIONS_FILE="positions.txt"
-KNOWN_SITES="known_sites_chr12.vcf.gz"
+POSITIONS_FILE="$PWD/positions.txt"
+KNOWN_SITES="$PWD/Outputs/known_sites_chr12.vcf.gz"
 
 mkdir -p "$OUTDIR"
 cd "$OUTDIR"
@@ -111,9 +111,9 @@ awk -v cid="$contig_id" 'BEGIN{OFS="\t"}{
 echo "[11/14] Extracting KRAS G12V variant..."
 bcftools view -r chr12:25245350 "$KNOWN_SITES" > kras_g12v.vcf
 
-# -------- STEP 12: DOWNLOAD STRUCTURE --------
-echo "[12/14] Downloading KRAS PDB structure..."
-wget -q https://files.rcsb.org/download/6OIM.pdb
+# -------- STEP 12: COPY STRUCTURE --------
+echo "[12/14] Copying KRAS PDB structure..."
+cp "$WORKDIR/6OIM.pdb" .
 
 # -------- STEP 13: ALLELE COUNTS --------
 echo "[13/14] Extracting allele counts and frequencies..."
@@ -123,7 +123,7 @@ bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%AC\t%AF\n" \
 
 # -------- STEP 14: STRUCTURAL ANALYSIS --------
 echo "[14/14] Running structural analysis script..."
-python3 kras_structural_analysis.py
+python3 "$WORKDIR/kras_structural_analysis.py"
 
 echo "=== PIPELINE COMPLETED SUCCESSFULLY ==="
 echo "Results saved in: $OUTDIR"
