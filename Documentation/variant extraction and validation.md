@@ -389,7 +389,6 @@ The generated report includes:
 
 ---
 
-
 ## Key Outputs
 
 | File                          | Description                   | Purpose                   |
